@@ -90,17 +90,17 @@ class ListPantries extends Controller
 
         $validated = $request->validate([
             'name' => 'required|unique:pantries',
-            'address' => 'required',
+            'address' => 'nullable',
             'barangay' => 'required',
             'city' => 'required',
             'province' => 'required',
             'region' => 'required',
             'source' => 'required',
             'contact.person' => 'required',
-            'contact.number' => 'required',
-            'accounts.facebook' => 'required',
-            'accounts.twitter' => 'required',
-            'accounts.instagram' => 'required',
+            'contact.number' => 'nullable',
+            'accounts.facebook' => 'nullable',
+            'accounts.twitter' => 'nullable',
+            'accounts.instagram' => 'nullable',
         ]);
 
         $contact = new Contact();

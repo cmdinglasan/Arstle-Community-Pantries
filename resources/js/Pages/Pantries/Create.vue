@@ -20,7 +20,7 @@
                             <label for="address" class="block">
                                 <span class="text-sm">Address</span>
                             </label>
-                            <input type="text" id="address" class="w-full rounded-md border-0 shadow" v-model="form.address" required/>
+                            <input type="text" id="address" class="w-full rounded-md border-0 shadow" v-model="form.address"/>
                             <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
                         </div>
                     </fieldset>
@@ -74,7 +74,7 @@
                             <label for="contact_num" class="block">
                                 <span class="text-sm">Phone Number</span>
                             </label>
-                            <input type="text" id="contact_num" class="w-full rounded-md border-0 shadow" v-model="form.contact.number" maxlength="12" required/>
+                            <input type="text" id="contact_num" class="w-full rounded-md border-0 shadow" v-model="form.contact.number" maxlength="12"/>
                             <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
                         </div>
                     </fieldset>
@@ -83,7 +83,7 @@
                             <label for="facebook" class="block">
                                 <span class="text-sm">Facebook</span>
                             </label>
-                            <input type="text" id="facebook" class="w-full rounded-md border-0 shadow" v-model="form.accounts.facebook" required/>
+                            <input type="text" id="facebook" class="w-full rounded-md border-0 shadow" v-model="form.accounts.facebook"/>
                             <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
                         </div>
                     </fieldset>
@@ -92,7 +92,7 @@
                             <label for="twitter" class="block">
                                 <span class="text-sm">Twitter</span>
                             </label>
-                            <input type="text" id="twitter" class="w-full rounded-md shadow" :class="form.errors.name ? 'border-2 border-red-500' : 'border-0'" v-model="form.accounts.twitter" required/>
+                            <input type="text" id="twitter" class="w-full rounded-md shadow" :class="form.errors.name ? 'border-2 border-red-500' : 'border-0'" v-model="form.accounts.twitter"/>
                             <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
                         </div>
                     </fieldset>
@@ -101,7 +101,7 @@
                             <label for="instagram" class="block">
                                 <span class="text-sm">Instagram</span>
                             </label>
-                            <input type="text" id="instagram" class="w-full rounded-md border-0 shadow" v-model="form.accounts.instagram" required/>
+                            <input type="text" id="instagram" class="w-full rounded-md border-0 shadow" v-model="form.accounts.instagram"/>
                             <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
                         </div>
                     </fieldset>
