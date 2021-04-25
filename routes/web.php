@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ListPantries;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,5 +32,14 @@ Route::get('/', function() {
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware(['auth', 'verified'])->group(function() {
+    Route::get('/pantries/create', [ListPantries::class, 'create'])->name('pantries.create');
+    Route::post('/pantries/store', [ListPantries::class, 'store'])->name('pantries.store');
+    Route::get('/pantries/edit', [ListPantries::class, 'edit'])->name('pantries.edit');
+    Route::post('/pantries/update', [ListPantries::class, 'update'])->name('pantries.update');
+});
+
+Route::get('/pantries', [ListPantries::class, 'show'])->name('pantries.show');
 
 require __DIR__.'/auth.php';

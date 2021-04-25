@@ -14,6 +14,10 @@ module.exports = {
         extend: {
             fontFamily: {
                 sans: ['Nunito', ...defaultTheme.fontFamily.sans],
+                material: ['Roboto', ...defaultTheme.fontFamily.sans],
+            },
+            transitionProperty: {
+              'height': 'height, max-height',
             },
         },
     },
