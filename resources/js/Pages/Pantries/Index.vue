@@ -13,7 +13,7 @@
                         <div class="relative bg-white shadow rounded-md mb-4" v-for="place in pantry.places">
                             <div class="relative">
                                 <inertia-link :href="route('pantries.show', place.id)" class="relative p-4 w-full flex items-center">
-                                    <div class="relative flex-1 text-left">
+                                    <div class="relative flex-1 text-left overflow-hidden overflow-ellipsis break-word">
                                         <h1 class="font-bold text-lg">{{ place.name }}</h1>
                                         <span class="text-sm text-gray-500">{{ place.address + ', ' + place.barangay + ', ' + place.city }}</span>
                                     </div>

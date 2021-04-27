@@ -13,7 +13,7 @@
                         <div class="relative bg-white shadow rounded-md mb-4">
                             <div class="relative">
                                 <button class="relative p-4 w-full flex items-center">
-                                    <div class="relative flex-1 text-left">
+                                    <div class="relative flex-1 text-left overflow-hidden overflow-ellipsis break-all">
                                         <h1 class="font-bold text-lg">{{ pantry.name }}</h1>
                                         <span class="text-sm text-gray-500">{{ pantry.address + ', ' + pantry.barangay + ', ' + pantry.city }}</span>
                                     </div>

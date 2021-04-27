@@ -2,25 +2,27 @@
     <div class="relative font-material">
         <div class="fixed top-0 left-0 z-20 h-16 w-full bg-blue-500 shadow">
             <header class="relative h-16 flex items-center">
-                <button type="button" class="h-16 w-16 text-white" @click="sidebarOpen = !sidebarOpen">
+                <button type="button" class="flex-none h-16 w-16 text-white" @click="sidebarOpen = !sidebarOpen">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <div class="flex-1">
-                    <h1 class="font-bold text-lg text-white"><slot name="header"/></h1>
+                <div class="flex-1 min-w-[0px]">
+                    <div class="flex w-full overflow-hidden h-7 overflow-ellipsis">
+                        <h1 class="font-bold text-lg text-white"><slot name="header"/></h1>
+                    </div>
                 </div>
-                <inertia-link as="button" :href="route('pantries.create')" class="h-16 w-16 text-white" v-if="(!route().current('pantries.show'))|| route().current('pantries.edit')">
+                <inertia-link as="button" :href="route('pantries.create')" class="flex-none h-16 w-16 text-white" v-if="(!route().current('pantries.show'))|| route().current('pantries.edit')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                 </inertia-link>
-                <inertia-link as="button" :href="route('pantries.edit', current)" class="h-16 w-16 text-white" v-if="route().current('pantries.show')">
+                <inertia-link as="button" :href="route('pantries.edit', current)" class="flex-none h-16 w-16 text-white" v-if="route().current('pantries.show')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
                 </inertia-link>
-                <button type="button" class="h-16 w-16 text-white" @click="toggleSearch()">
+                <button type="button" class="flex-none h-16 w-16 text-white" @click="toggleSearch()">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
