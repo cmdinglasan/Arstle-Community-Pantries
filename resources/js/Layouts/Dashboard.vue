@@ -2,7 +2,11 @@
     <div class="relative font-material">
         <div class="fixed top-0 left-0 z-20 h-16 w-full bg-blue-500 shadow">
             <header class="relative h-16 flex items-center">
-                <button type="button" class="flex-none h-16 w-16 text-white" @click="sidebarOpen = !sidebarOpen">
+                <button class="flex-none h-16 w-16 text-white" @click="goBack()" v-if="subDirectory">                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </button>
+                <button type="button" class="flex-none h-16 w-16 text-white" @click="sidebarOpen = !sidebarOpen" v-else>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -22,6 +26,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                     </svg>
                 </inertia-link>
+
                 <button type="button" class="flex-none h-16 w-16 text-white" @click="toggleSearch()">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -113,15 +118,27 @@ export default {
             sidebarOpen: false,
             searchOpen: false,
             searchQuery: null,
+            subDirectory: false,
         }
     },
+    mounted() {
+      this.checkIfSubDirectory();
+    },
     methods: {
-      toggleSearch() {
+        toggleSearch() {
           this.searchOpen = true;
           this.$nextTick(() => {
               this.$refs['searchBox'].focus();
           });
-      }
+        },
+        goBack() {
+            history.back();
+        },
+        checkIfSubDirectory() {
+            if(route().current('pantries.*') && !route().current('pantries.index')) {
+                return this.subDirectory = true;
+            }
+        }
     },
 }
 </script>
