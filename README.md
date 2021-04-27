@@ -12,7 +12,24 @@ This is a Laravel-based API containing the list of community pantries in PH adde
 
 | method | url           | description | example |
 | ------ | ------------- | ----------- | ------- |
-| GET    | /api/pantries | Return the list of community pantries | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries)
+| GET    | /api/pantries | Return the list of community pantries | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries) |
+
+## Parameters ##
+
+| method | parameter     | description | example |
+| ------ | ------------- | ----------- | ------- |
+| GET    | ?region={region} | Return the list by region | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?region=National%20Capital%20Region) |
+| GET    | ?city={city} | Return the list by city | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?city=Taguig) |
+| GET    | ?sortBy={category} | Return the list by category (see category parameters below). Default alphabetical order is Ascending | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?sortBy=region) |
+| GET    | ?order={order} | Return the list either 'asc' or 'desc' | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?order=desc) |
+
+## Category Parameters
+
+| Category | description | example |
+| -------- | ----------- | ------- |
+| region   | Return the list by 'region' | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?sortBy=region) |
+| city   | Return the list by 'city' | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?sortBy=city) |
+| ?order   | Return the list by category depending on order (asc or desc) | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?sortBy=city&order=desc) |
 
 ## How does it work?
 <details>
@@ -28,4 +45,7 @@ To contribute in adding in the list of community pantries, you may click here [A
 
 ## Credits
 [Christian Dinglasan](https://cmdinglasan.com)
+
+## Contributors
+
 
