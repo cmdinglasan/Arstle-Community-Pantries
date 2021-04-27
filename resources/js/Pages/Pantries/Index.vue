@@ -4,7 +4,7 @@
             Community Pantries
         </template>
         <template #content>
-            <section class="relative py-4">
+            <section class="relative">
                 <div v-for="pantry in pantries" class="mb-4">
                     <header class="relative mb-4">
                         <h1 class="font-bold">{{ pantry.region }}</h1>
