@@ -2,7 +2,7 @@
 
 ## About the project
 
-This is a Laravel-based API containing the list of community pantries added on the database.
+This is a Laravel-based API containing the list of community pantries in PH added on the database.
 
 ## Features
 
@@ -19,6 +19,9 @@ This is a Laravel-based API containing the list of community pantries added on t
     <summary>Few explanation on the API</summary><br/>
     - The API returns the result.
 </details>
+
+## Contribute
+To contribute in adding in the list of community pantries, you may click here [Arstle Pantries](https://arstle-pantries.herokuapp.com/pantries)
 
 ## License
 [MIT](https://opensource.org/licenses/MIT) - Copyright &copy; [Arstle Media](https://arstlemedia.com)
