@@ -16927,9 +16927,8 @@ __webpack_require__.r(__webpack_exports__);
         _this.$refs['searchBox'].focus();
       });
     },
-    goBack: function goBack(event) {
+    goBack: function goBack() {
       if (document.referrer.indexOf(window.location.host) !== -1) {
-        event.preventDefault();
         history.back();
       } else {
         location.href = route('pantries.index');

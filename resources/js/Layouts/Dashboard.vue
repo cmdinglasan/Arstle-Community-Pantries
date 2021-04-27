@@ -131,9 +131,8 @@ export default {
               this.$refs['searchBox'].focus();
           });
         },
-        goBack(event) {
+        goBack() {
             if(document.referrer.indexOf(window.location.host) !== -1) {
-                event.preventDefault();
                 history.back();
             } else {
                 location.href = route('pantries.index');
