@@ -19,4 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/pantries', [ListPantries::class, 'index'])->name('pantries.index');
+Route::get('/pantries', [ListPantries::class, 'api'])->name('pantries.api');

@@ -6,7 +6,9 @@ use App\Models\Account;
 use App\Models\Contact;
 use App\Models\Pantry;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ListPantries extends Controller
@@ -27,14 +29,59 @@ class ListPantries extends Controller
 
         foreach($regions as $region) {
             $pantryList = collect();
-            $pantries = Pantry::with(['contacts', 'accounts'])->where('region', $region->region)->get();
+            $pantries = Pantry::with(['contacts', 'accounts'])->where('region', $region->region)
+                ->orderBy('city', 'ASC')
+                ->orderBy('name', 'ASC')
+                ->get();
             foreach($pantries as $pantry) {
                 $pantryList->push($pantry);
             }
             $pantryCollect->push(['region' => $region->region, 'places' => $pantryList]);
         }
+        return Inertia::render('Pantries/Index')->with('pantries', $pantryCollect);
+    }
+    /**
+     * Display all listing of the resource via API call.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function api(Request $request)
+    {
+        $pantries = Pantry::with(['contacts', 'accounts']);
 
-        return response()->json($pantryCollect);
+//        $pantries->where('region', $request->input('region'));
+//
+//        return $pantries->get();
+
+        $query = $request->all();
+
+        if($request->has('region')) {
+            $pantries->where('region', $request->input('region'));
+        }
+
+        if($request->has('city')) {
+            $pantries->where('city', $request->input('city'));
+        }
+
+        if($request->has('order')) {
+            if($request->input('order') == 'asc' || $request->input('order') == 'desc') {
+                if($request->has('sortBy')) {
+                    $pantries->orderBy($request->input('sortBy'), Str::upper($request->input('order')) ?? 'ASC');
+                } else {
+                    $pantries->orderBy('name', Str::upper($request->input('order')) ?? 'ASC');
+                }
+            } else {
+                return response()->json(['message' => "Order direction must be 'asc' or 'desc' (lowercase only)", 'order' => $request->input['order'], 'requests' => $query]);
+            }
+        }
+
+        if(count($pantries->get()) > 0) {
+            return response()->json($pantries->get()->makeHidden(['contributor_id', 'verifier_id']));
+        } else {
+            return response()->json(['message' => 'No results based on query', 'requests' => $query]);
+        }
+
+
     }
 
     /**
@@ -55,39 +102,6 @@ class ListPantries extends Controller
      */
     public function store(Request $request)
     {
-//        if($request) {
-//            return response()->json($request);
-//        }
-
-//        $contact = Contact::create(
-//            Request::validate([
-//                'name' => $request->contact['person'],
-//                'contact_num' => $request->contact['number'],
-//            ])
-//        );
-//
-//        $account = Account::create(
-//            Request::validate([
-//                'facebook' => $request->accounts['facebook'],
-//                'twitter' => $request->accounts['twitter'],
-//                'instagram' => $request->accounts['instagram'],
-//            ])
-//        );
-//
-//        $pantry = Pantry::create(
-//            Request::validate([
-//                'name' => $request->name,
-//                'address' => $request->address,
-//                'barangay' => $request->barangay,
-//                'city' => $request->city,
-//                'province' => $request->province,
-//                'region' => $request->region,
-//                'contacts_id' => $contact->id,
-//                'accounts_id' => $account->id,
-//                'source' => $request->source,
-//            ])
-//        );
-
         $validated = $request->validate([
             'name' => 'required|unique:pantries',
             'address' => 'nullable',
@@ -124,12 +138,12 @@ class ListPantries extends Controller
         $pantry->contact_id = $contact->id;
         $pantry->account_id = $account->id;
         $pantry->source = $request->source;
+        $pantry->contributor_id = Auth::id();
         $pantry->save();
 
         if($pantry) {
             $message = 'Successfully added ' . $pantry->name;
-
-            return redirect()->route('pantries.show')->with('message', $message);
+            return redirect()->route('pantries.index')->with('message', $message);
         } else {
             $message = 'Error adding ' . $pantry->name;
             return redirect()->back()->with('message', $message);
@@ -139,38 +153,29 @@ class ListPantries extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Pantry  $pantry
-     * @return \Illuminate\Http\Response
+     * @param \App\Models\Pantry $pantry
+     * @param Request $request
+     * @return \Inertia\Response
      */
-    public function show(Pantry $pantry)
+    public function show(Pantry $pantry, Request $request)
     {
-        $regions = DB::table('pantries')
-        ->select('region')
-        ->groupBy('region')
-        ->get();
+        $pantry = Pantry::with('contacts','accounts')->findOrFail($request->id);
 
-        $pantryCollect = collect();
-
-        foreach($regions as $region) {
-            $pantryList = collect();
-            $pantries = Pantry::with(['contacts', 'accounts'])->where('region', $region->region)->get();
-            foreach($pantries as $pantry) {
-                $pantryList->push($pantry);
-            }
-            $pantryCollect->push(['region' => $region->region, 'places' => $pantryList]);
-        }
-        return Inertia::render('Pantries/Show')->with('pantries', $pantryCollect);
+        return Inertia::render('Pantries/Show')->with('pantry', $pantry);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Pantry  $pantry
-     * @return \Illuminate\Http\Response
+     * @param \App\Models\Pantry $pantry
+     * @param Request $request
+     * @return \Inertia\Response
      */
-    public function edit(Pantry $pantry)
+    public function edit(Pantry $pantry, Request $request)
     {
-        return Inertia::render('Pantries/Edit');
+        $current = Pantry::with('contacts', 'accounts')->findOrFail($request->id);
+
+        return Inertia::render('Pantries/Edit')->with('pantry', $current);
     }
 
     /**
@@ -182,7 +187,45 @@ class ListPantries extends Controller
      */
     public function update(Request $request, Pantry $pantry)
     {
-        return 'update';
+        $pantry = Pantry::with('contacts', 'accounts')->findOrFail($request->id);
+
+        $request->validate([
+            'name' => 'required|unique:pantries',
+            'address' => 'nullable',
+            'barangay' => 'required',
+            'city' => 'required',
+            'province' => 'required',
+            'region' => 'required',
+            'source' => 'required',
+            'contributor' => 'required',
+            'contact.person' => 'required',
+            'contact.number' => 'nullable',
+            'accounts.facebook' => 'nullable',
+            'accounts.twitter' => 'nullable',
+            'accounts.instagram' => 'nullable',
+        ]);
+//
+        $contact->name = $request->contact['person'];
+        $contact->contact_num = $request->contact['number'];
+        $contact->save();
+
+        $account->facebook = $request->accounts['facebook'];
+        $account->twitter = $request->accounts['twitter'];
+        $account->instagram = $request->accounts['instagram'];
+        $account->save();
+
+        $pantry->name = $request->name;
+        $pantry->address = $request->address;
+        $pantry->barangay = $request->barangay;
+        $pantry->city = $request->city;
+        $pantry->province = $request->province;
+        $pantry->region = $request->region;
+        $pantry->contact_id = $contact->id;
+        $pantry->account_id = $account->id;
+        $pantry->source = $request->source;
+        $pantry->save();
+
+        return Inertia::render('Pantries/Edit')->with('pantry', $current);
     }
 
     /**

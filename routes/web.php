@@ -36,10 +36,11 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/pantries/create', [ListPantries::class, 'create'])->name('pantries.create');
     Route::post('/pantries/store', [ListPantries::class, 'store'])->name('pantries.store');
-    Route::get('/pantries/edit', [ListPantries::class, 'edit'])->name('pantries.edit');
+    Route::get('/pantries/edit/{id}', [ListPantries::class, 'edit'])->name('pantries.edit');
     Route::post('/pantries/update', [ListPantries::class, 'update'])->name('pantries.update');
 });
 
-Route::get('/pantries', [ListPantries::class, 'show'])->name('pantries.show');
+Route::get('/pantries', [ListPantries::class, 'index'])->name('pantries.index');
+Route::get('/pantries/show/{id}', [ListPantries::class, 'show'])->name('pantries.show');
 
 require __DIR__.'/auth.php';

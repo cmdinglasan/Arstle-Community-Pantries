@@ -1,7 +1,7 @@
 <template>
     <dashboard-layout>
         <template #header>
-            Create Pantry
+            Edit Pantry
         </template>
         <template #content>
             <section class="relative">
@@ -115,14 +115,6 @@
                         </div>
                     </fieldset>
                     <fieldset class="mb-4">
-                        <div class="relative">
-                            <label for="contributor" class="block">
-                                <span class="text-sm">Contributor</span>
-                            </label>
-                            <input type="text" id="contributor" class="w-full rounded-md border-0 shadow" :value="$inertia.page.props.auth.user.name + ' (' + $inertia.page.props.auth.user.email + ')'" disabled/>
-                        </div>
-                    </fieldset>
-                    <fieldset class="mb-4">
                         <button type="submit" class="px-4 py-2 bg-blue-500 rounded-md shadow-md hover:shadow-lg transition">
                             <span class="text-white font-bold uppercase text-sm">Submit</span>
                         </button>
@@ -141,7 +133,7 @@
 import DashboardLayout from '@/Layouts/Dashboard'
 
 export default {
-name: "Create",
+    name: "Edit",
     props: ['searchQuery'],
     components: {
         DashboardLayout,

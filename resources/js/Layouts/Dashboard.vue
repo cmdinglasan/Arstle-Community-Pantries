@@ -10,12 +10,17 @@
                 <div class="flex-1">
                     <h1 class="font-bold text-lg text-white"><slot name="header"/></h1>
                 </div>
-                <inertia-link as="button" :href="route('pantries.create')" class="h-16 w-16 text-white">
+                <inertia-link as="button" :href="route('pantries.create')" class="h-16 w-16 text-white" v-if="(!route().current('pantries.show'))|| route().current('pantries.edit')">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
                 </inertia-link>
-                <button type="button" class="h-16 w-16 text-white" @click="searchOpen = true">
+                <inertia-link as="button" :href="route('pantries.edit', current)" class="h-16 w-16 text-white" v-if="route().current('pantries.show')">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                </inertia-link>
+                <button type="button" class="h-16 w-16 text-white" @click="toggleSearch()">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -32,7 +37,7 @@
                     </svg>
                 </button>
                 <div class="flex-1">
-                    <input type="text" class="h-16 w-full border-0 focus:ring-0 pr-4" v-model="searchQuery"/>
+                    <input type="text" ref="searchBox" class="h-16 w-full border-0 focus:ring-0 pr-4" v-model="searchQuery"/>
                 </div>
             </div>
         </div>
@@ -49,7 +54,7 @@
                 <section class="relative p-4 border-t">
                     <nav class="relative">
                         <li class="block relative">
-                            <inertia-link :href="route('pantries.show')" class="flex items-center gap-4 px-4 py-2 rounded-md text-gray-500 hover:text-gray-800 hover:bg-gray-100">
+                            <inertia-link :href="route('pantries.index')" class="flex items-center gap-4 px-4 py-2 rounded-md text-gray-500 hover:text-gray-800 hover:bg-gray-100">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                 </svg>
@@ -99,7 +104,7 @@
 
 <script>
 export default {
-    props: ['auth'],
+    props: ['auth','current'],
     name: "Dashboard",
     data() {
         return {
@@ -107,6 +112,14 @@ export default {
             searchOpen: false,
             searchQuery: null,
         }
+    },
+    methods: {
+      toggleSearch() {
+          this.searchOpen = true;
+          this.$nextTick(() => {
+              this.$refs['searchBox'].focus();
+          });
+      }
     },
 }
 </script>

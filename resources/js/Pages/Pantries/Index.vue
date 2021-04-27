@@ -1,28 +1,28 @@
 <template>
-    <dashboard-layout :current="pantry.id">
+    <dashboard-layout>
         <template #header>
-            {{ pantry.name }}
+            Community Pantries
         </template>
         <template #content>
             <section class="relative py-4">
-                <div class="mb-4">
+                <div v-for="pantry in pantries" class="mb-4">
                     <header class="relative mb-4">
                         <h1 class="font-bold">{{ pantry.region }}</h1>
                     </header>
                     <div class="relative">
-                        <div class="relative bg-white shadow rounded-md mb-4">
+                        <div class="relative bg-white shadow rounded-md mb-4" v-for="place in pantry.places">
                             <div class="relative">
-                                <button class="relative p-4 w-full flex items-center">
+                                <inertia-link :href="route('pantries.show', place.id)" class="relative p-4 w-full flex items-center">
                                     <div class="relative flex-1 text-left">
-                                        <h1 class="font-bold text-lg">{{ pantry.name }}</h1>
-                                        <span class="text-sm text-gray-500">{{ pantry.address + ', ' + pantry.barangay + ', ' + pantry.city }}</span>
+                                        <h1 class="font-bold text-lg">{{ place.name }}</h1>
+                                        <span class="text-sm text-gray-500">{{ place.address + ', ' + place.barangay + ', ' + place.city }}</span>
                                     </div>
                                     <div class="w-6 h-6">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                                         </svg>
                                     </div>
-                                </button>
+                                </inertia-link>
                             </div>
                             <div class="relative">
 
@@ -38,8 +38,8 @@
 <script>
 import DashboardLayout from '@/Layouts/Dashboard'
 export default {
-    props: ['pantry'],
-    name: "Show",
+    props: ['pantries'],
+    name: "Index",
     data() {
         return {
             activeCard: null,
