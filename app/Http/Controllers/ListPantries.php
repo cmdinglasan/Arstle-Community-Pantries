@@ -76,7 +76,7 @@ class ListPantries extends Controller
         }
 
         if(count($pantries->get()) > 0) {
-            return response()->json($pantries->get()->makeHidden(['contributor_id', 'verifier_id']));
+            return response()->json($pantries->get()->makeHidden(['id','contributor_id', 'verifier_id']));
         } else {
             return response()->json(['message' => 'No results based on query', 'requests' => $query]);
         }
@@ -190,28 +190,42 @@ class ListPantries extends Controller
         $pantry = Pantry::with('contacts', 'accounts')->findOrFail($request->id);
 
         $request->validate([
-            'name' => 'required|unique:pantries',
+            'name' => 'required',
             'address' => 'nullable',
             'barangay' => 'required',
             'city' => 'required',
             'province' => 'required',
             'region' => 'required',
             'source' => 'required',
-            'contributor' => 'required',
-            'contact.person' => 'required',
-            'contact.number' => 'nullable',
-            'accounts.facebook' => 'nullable',
-            'accounts.twitter' => 'nullable',
-            'accounts.instagram' => 'nullable',
+            'contacts.person' => 'nullable',
+            'contacts.number' => 'nullable',
+            'featured_image_local' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'featured_image_url' => 'nullable',
         ]);
-//
-        $contact->name = $request->contact['person'];
-        $contact->contact_num = $request->contact['number'];
+
+        $featuredImage = null;
+        $imageName = null;
+
+        if($request->featured_image_local) {
+            $imageName = time().'.'.$request->featured_image_local->getClientOriginalName();
+            if($imageName != $pantry->featured_image_local) {
+                $featuredImage = $request->file('featured_image_local')->storeAs('images', $imageName, 'public');
+            } else {
+                $featuredImage = $pantry->featured_image_local;
+            }
+        }
+
+//        return $imageName;
+
+        $contact = Contact::findOrFail($pantry->contact_id);
+        $contact->name = $request->contacts[0]['name'];
+        $contact->contact_num = $request->contacts[0]['contact_num'];
         $contact->save();
 
-        $account->facebook = $request->accounts['facebook'];
-        $account->twitter = $request->accounts['twitter'];
-        $account->instagram = $request->accounts['instagram'];
+        $account = Account::findOrFail($pantry->account_id);
+        $account->facebook = $request->accounts[0]['facebook'];
+        $account->twitter = $request->accounts[0]['twitter'];
+        $account->instagram = $request->accounts[0]['instagram'];
         $account->save();
 
         $pantry->name = $request->name;
@@ -223,9 +237,13 @@ class ListPantries extends Controller
         $pantry->contact_id = $contact->id;
         $pantry->account_id = $account->id;
         $pantry->source = $request->source;
+        $pantry->featured_image_local = $featuredImage;
+        $pantry->featured_image_url = $request->featured_image_url;
         $pantry->save();
 
-        return Inertia::render('Pantries/Edit')->with('pantry', $current);
+        if($pantry) {
+            return ['message' => 'Item updated successfully', 'code' => 200];
+        };
     }
 
     /**

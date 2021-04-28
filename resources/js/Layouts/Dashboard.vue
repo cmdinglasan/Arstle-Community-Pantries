@@ -119,12 +119,20 @@ export default {
             searchOpen: false,
             searchQuery: null,
             subDirectory: false,
+            scrollPosition: null,
         }
     },
     mounted() {
       this.checkIfSubDirectory();
+      window.addEventListener('scroll', this.updateScroll);
+      if(route().current('pantries.show')) {
+          window.addEventListener('scroll', this.updateScroll);
+      }
     },
     methods: {
+        updateScroll() {
+            this.scrollPosition = window.scrollY;
+        },
         toggleSearch() {
           this.searchOpen = true;
           this.$nextTick(() => {
@@ -143,6 +151,9 @@ export default {
                 return this.subDirectory = true;
             }
         }
+    },
+    destroy() {
+        window.removeEventListener('scroll', this.updateScroll)
     },
 }
 </script>

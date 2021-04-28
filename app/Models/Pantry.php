@@ -13,7 +13,7 @@ class Pantry extends Model
 
     protected $fillable = ['name', 'address', 'barangay', 'city', 'province', 'region', 'contacts_id', 'accounts_id', 'source'];
 
-    protected $hidden = ['contact_id', 'account_id', 'created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at'];
 
     /**
      * Show contact info of the Pantry contact person
