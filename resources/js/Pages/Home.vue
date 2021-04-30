@@ -352,14 +352,7 @@ export default {
         filteredList() {
             if(this.searchQuery){
                 return this.pantries.filter((item)=>{
-                    return this.searchQuery.toLowerCase().split(' ').every(v =>
-                        item.name.toLowerCase().includes(v)
-                        || item.address.toLowerCase().includes(v)
-                        || item.city.toLowerCase().includes(v)
-                        || item.barangay.toLowerCase().includes(v)
-                        || item.province.toLowerCase().includes(v)
-                        || item.region.toLowerCase().includes(v)
-                    )
+                    return this.searchQuery.toLowerCase().split(' ').every(v => item.name.toLowerCase().includes(v))
                 })
             }
         }
@@ -385,7 +378,7 @@ export default {
                 zoomControl: false,
             });
 
-            L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; <a href="https://arstlemedia.com">Arstle</a> contributors, Rappler',
             }).addTo(this.map);
         },
