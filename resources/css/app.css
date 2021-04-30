@@ -13,24 +13,22 @@ button * {
 }
 
 .card-list {
-    @apply fixed z-20 bottom-0 md:top-8 left-0 w-full shadow-md md:rounded-md md:m-8 bg-white transform;
+    @apply fixed z-20 bottom-0 md:top-8 h-full left-0 w-full shadow-md md:rounded-md bg-white transform;
     transition: all 0.25s ease-in-out;
-    max-width: 480px;
-}
-.card-list.mobile {
-    @apply left-1/2 -translate-x-1/2;
-    height: calc(100% - 2rem);
 }
 .card-list.shown {
     @apply translate-y-0 rounded-none;
 }
 .card-list.not-shown {
     @apply rounded-t-md;
-    --tw-translate-y: calc(100% - 8rem);
+    --tw-translate-y: calc(100% - 12rem);
+}
+.card-list.mobile.not-shown {
+    --tw-translate-y: calc(100% - 10rem);
 }
 
 .map {
-    @apply w-full;
+    @apply w-full z-0;
     height: calc(100vh - 2rem);
 }
 .map #openstreet {

@@ -27,7 +27,7 @@ use Inertia\Inertia;
 
 Route::get('/', function() {
     return Inertia::render('Home');
-});
+})->name('main');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
