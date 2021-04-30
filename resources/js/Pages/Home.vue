@@ -352,13 +352,14 @@ export default {
         filteredList() {
             if(this.searchQuery){
                 return this.pantries.filter((item)=>{
-                    // return this.searchQuery.toLowerCase().split(' ').every(v => item.name.toLowerCase().includes(v))
-                    return item.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
-                        || item.address.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
-                        || item.city.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
-                        || item.barangay.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
-                        || item.province.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
-                        || item.region.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
+                    return this.searchQuery.toLowerCase().split(' ').every(v =>
+                        item.name.toLowerCase().includes(v)
+                        || item.address.toLowerCase().includes(v)
+                        || item.city.toLowerCase().includes(v)
+                        || item.barangay.toLowerCase().includes(v)
+                        || item.province.toLowerCase().includes(v)
+                        || item.region.toLowerCase().includes(v)
+                    )
                 })
             }
         }
