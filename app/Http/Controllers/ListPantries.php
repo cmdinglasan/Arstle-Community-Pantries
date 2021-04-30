@@ -155,36 +155,46 @@ class ListPantries extends Controller
      */
     public function api(Request $request)
     {
-        $pantries = Pantry::with(['contacts', 'accounts']);
-
-//        $pantries->where('region', $request->input('region'));
-//
-//        return $pantries->get();
+        $pantries = collect();
 
         $query = $request->all();
 
-        if($request->has('region')) {
-            $pantries->where('region', $request->input('region'));
-        }
+        if($request->has('coordsOnly')) {
+            if($request->input('coordsOnly') == true) {
+                $pantries = Pantry::select(['name','latitude','longitude'])->orderBy('name');
+            }
+        } else {
+            $pantries = Pantry::with(['contacts', 'accounts']);
 
-        if($request->has('city')) {
-            $pantries->where('city', $request->input('city'));
-        }
+            if(!$query) {
+                $pantries->orderBy('name', 'ASC');
+            }
 
-        if($request->has('order')) {
-            if($request->input('order') == 'asc' || $request->input('order') == 'desc') {
-                if($request->has('sortBy')) {
-                    $pantries->orderBy($request->input('sortBy'), Str::upper($request->input('order')) ?? 'ASC');
+            if($request->has('region')) {
+                $pantries->where('region', $request->input('region'));
+            }
+
+            if($request->has('city')) {
+                $pantries->where('city', $request->input('city'));
+            }
+
+            if($request->has('order')) {
+                if($request->input('order') == 'asc' || $request->input('order') == 'desc') {
+                    if($request->has('sortBy')) {
+                        $pantries->orderBy($request->input('sortBy'), Str::upper($request->input('order')) ?? 'ASC');
+                    } else {
+                        $pantries->orderBy('name', Str::upper($request->input('order')) ?? 'ASC');
+                    }
                 } else {
-                    $pantries->orderBy('name', Str::upper($request->input('order')) ?? 'ASC');
+                    return response()->json(['message' => "Order direction must be 'asc' or 'desc' (lowercase only)", 'order' => $request->input['order'], 'requests' => $query]);
                 }
-            } else {
-                return response()->json(['message' => "Order direction must be 'asc' or 'desc' (lowercase only)", 'order' => $request->input['order'], 'requests' => $query]);
             }
         }
 
+
+
         if(count($pantries->get()) > 0) {
-            return response()->json($pantries->get()->makeHidden(['id','contributor_id', 'verifier_id']));
+            return response()->json($pantries->get()->makeHidden(['id','contributor_id', 'verifier_id', 'contact_id', 'account_id']));
         } else {
             return response()->json(['message' => 'No results based on query', 'requests' => $query]);
         }
@@ -230,6 +240,8 @@ class ListPantries extends Controller
             'accounts.instagram' => 'nullable',
             'featured_image_local' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'featured_image_url' => 'nullable',
+            'latitude' => 'nullable',
+            'longitude' => 'nullable',
         ]);
 
         $featuredImage = null;
@@ -268,6 +280,8 @@ class ListPantries extends Controller
         $pantry->contributor_id = Auth::id();
         $pantry->featured_image_local = $featuredImage;
         $pantry->featured_image_url = $request->featured_image_url;
+        $pantry->longitude = $request->longitude;
+        $pantry->latitude = $request->latitude;
         $pantry->save();
 
         if($pantry) {
@@ -346,6 +360,8 @@ class ListPantries extends Controller
             'contacts.number' => 'nullable',
             'featured_image_local' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'featured_image_url' => 'nullable',
+            'latitude' => 'nullable',
+            'longitude' => 'nullable',
         ]);
 
         $featuredImage = null;
@@ -384,6 +400,8 @@ class ListPantries extends Controller
         $pantry->source = $request->source;
         $pantry->featured_image_local = $featuredImage;
         $pantry->featured_image_url = $request->featured_image_url;
+        $pantry->longitude = $request->longitude;
+        $pantry->latitude = $request->latitude;
         $pantry->save();
 
         if($pantry) {

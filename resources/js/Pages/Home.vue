@@ -139,10 +139,9 @@
                         <div class="relative transition-height overflow-hidden" :class="cardDisplay ? 'h-32' : 'h-0'" v-if="currentPantry.featured_image_local || currentPantry.featured_image_url">
                             <div class="container mx-auto">
                                 <div class="h-32 w-full bg-fixed bg-cover bg-center" :style="{ backgroundImage: `url(${(currentPantry.featured_image_local ?? currentPantry.featured_image_url)}` }"></div>
-<!--                                <img :src="currentPantry.featured_image_local ?? currentPantry.featured_image_url" class="h-32 w-full object-cover"/>-->
                             </div>
                         </div>
-                        <div class="py-2 flex items-center transition justify-center" :class="cardDisplay ? 'h-6 px-4' : 'h-6'">
+                        <div class="py-2 flex items-center transition justify-center" v-if="!cardDisplay">
                             <button class="h-2 w-8 rounded-full bg-gray-300" @click="toggleCardDisplay"></button>
                         </div>
                         <div class="relative">
@@ -161,6 +160,14 @@
                                                 <span class="flex-1">Call</span>
                                             </div>
                                         </a>
+                                        <a :href="'https://www.google.com/maps/@' + currentPantry.latitude + ',' + currentPantry.longitude + ',13z'" target="_blank" class="inline-block px-4 py-2 mr-2 border rounded-full" v-if="currentPantry.latitude && currentPantry.longitude">
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd" />
+                                            </svg>
+                                            <span class="flex-1">Open in Google Maps</span>
+                                        </div>
+                                    </a>
                                     </div>
                                 </div>
                                 <div class="relative border-b" v-if="cardDisplay">
@@ -178,6 +185,17 @@
                                                     <span v-if="currentPantry.city" v-text="currentPantry.city + ', '"></span>
                                                     <span v-if="currentPantry.province" v-text="currentPantry.province"></span>
                                                 </span>
+                                        </div>
+                                    </div>
+                                    <div class="relative border-b flex items-start" v-if="currentPantry.latitude && currentPantry.longitude">
+                                        <div class="w-16 flex-none text-blue-500 py-4 text-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1 py-4 pr-4 pl-2">
+                                                <span class="text-sm">{{ currentPantry.latitude + ', ' + currentPantry.longitude}}</span>
                                         </div>
                                     </div>
                                     <div class="relative border-b flex items-start">
@@ -254,7 +272,7 @@
                                         </svg>
                                     </button>
                                 </div>
-                                <div class="relative p-4 bg-white border-b" v-for="pantry in pantries">
+                                <a href="#" class="block relative p-4 bg-white border-b" v-for="pantry in pantries" @click.prevent="setCurrentPantry(pantry)">
                                     <div class="flex items-start gap-4">
                                         <div class="flex-none w-12 h-12">
                                             <img :src="pantry.featured_image_local ? pantry.featured_image_local : (pantry.featured_image_url ? pantry.featured_image_url : 'https://via.placeholder.com/120x120')" class="w-12 h-12 rounded-full object-cover"/>
@@ -265,7 +283,7 @@
                                             <span class="font-bold text-gray-500 text-sm">{{ pantry.region }}</span>
                                         </div>
                                     </div>
-                                </div>
+                                </a>
                             </template>
                             <template v-else>
                                 <div class="relative p-4 h-12 bg-gray-300 rounded-md animate-pulse mx-4 my-2"></div>
@@ -303,6 +321,8 @@ export default {
             },
             sidebarOpen: false,
             screen: 'main',
+            map: null,
+            mapMarker: null,
         }
     },
     mounted() {
@@ -352,7 +372,7 @@ export default {
             this.screen = 'listOfPantries';
         },
         setupLeaflet() {
-            let map = L.map('mapid', {
+            this.map = L.map('mapid', {
                 center: [14.550001667731134, 121.05608763925126],
                 zoom: 13,
                 zoomControl: false,
@@ -360,12 +380,22 @@ export default {
 
             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; <a href="https://arstlemedia.com">Arstle</a> contributors, Rappler',
-            }).addTo(map);
+            }).addTo(this.map);
         },
         setCurrentPantry(pantry) {
+            this.screen = 'main';
             this.currentPantry = pantry;
             this.searchQuery = pantry.name;
             this.searchVisible = false;
+            if(pantry.latitude && pantry.longitude) {
+                this.mapMarker = L.marker([pantry.latitude, pantry.longitude], {
+                    title: [pantry.latitude, pantry.longitude],
+                    name: pantry.name,
+                }).addTo(this.map);
+                this.map.flyTo([pantry.latitude, pantry.longitude], 15);
+            } else {
+                this.map.removeLayer(this.mapMarker);
+            }
         },
     }
 }

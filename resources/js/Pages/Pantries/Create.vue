@@ -137,11 +137,27 @@
                             <label for="region" class="block">
                                 <span class="text-sm">Region</span>
                             </label>
-                            <select class="w-full rounded-md border-0 shadow" v-model="form.region" required>
+                            <select id="region" class="w-full rounded-md border-0 shadow" v-model="form.region" required>
                                 <option disabled selected>Choose a region</option>
                                 <option v-for="(region, index) in regions" :value="index" v-text="region"></option>
                             </select>
                             <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
+                        </div>
+                    </fieldset>
+                    <fieldset class="mb-4">
+                        <div class="relative">
+                            <label for="latitude" class="block">
+                                <span class="text-sm">Latitude (optional)</span>
+                            </label>
+                            <input type="text" id="latitude" class="w-full rounded-md border-0 shadow" v-model="form.latitude" pattern="[0-9]*[.][0-9]*" title="Map Coordinate (Latitude) (Ex: 14.000)"/>
+                        </div>
+                    </fieldset>
+                    <fieldset class="mb-4">
+                        <div class="relative">
+                            <label for="longitude" class="block">
+                                <span class="text-sm">Longitude (optional)</span>
+                            </label>
+                            <input type="text" id="longitude" class="w-full rounded-md border-0 shadow" v-model="form.longitude" pattern="[0-9]*[.][0-9]*" title="Map Coordinate (Longitude) (Ex: 12.000)"/>
                         </div>
                     </fieldset>
                     <fieldset class="mb-4">
@@ -158,7 +174,7 @@
                             <label for="contact_num" class="block">
                                 <span class="text-sm">Phone Number</span>
                             </label>
-                            <input type="text" id="contact_num" class="w-full rounded-md border-0 shadow" v-model="form.contact.number" maxlength="12"/>
+                            <input type="text" id="contact_num" class="w-full rounded-md border-0 shadow" v-model="form.contact.number" maxlength="12" pattern="^[+]*09[0-9]{9,10}" title="Enter a twelve digit phone number (Ex: 09123456789)"/>
                             <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
                         </div>
                     </fieldset>
@@ -251,6 +267,8 @@ name: "Create",
                 },
                 featured_image_local: null,
                 featured_image_url: null,
+                latitude: null,
+                longitude: null,
             }, {
                 resetOnSuccess: true,
             }),

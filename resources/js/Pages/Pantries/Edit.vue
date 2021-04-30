@@ -149,6 +149,22 @@
                     </fieldset>
                     <fieldset class="mb-4">
                         <div class="relative">
+                            <label for="latitude" class="block">
+                                <span class="text-sm">Latitude (optional)</span>
+                            </label>
+                            <input type="text" id="latitude" class="w-full rounded-md border-0 shadow" v-model="pantry.latitude" pattern="[0-9]*[.][0-9]*" title="Map Coordinate (Latitude) (Ex: 14.000)"/>
+                        </div>
+                    </fieldset>
+                    <fieldset class="mb-4">
+                        <div class="relative">
+                            <label for="longitude" class="block">
+                                <span class="text-sm">Longitude (optional)</span>
+                            </label>
+                            <input type="text" id="longitude" class="w-full rounded-md border-0 shadow" v-model="pantry.longitude" pattern="[0-9]*[.][0-9]*" title="Map Coordinate (Longitude) (Ex: 12.000)"/>
+                        </div>
+                    </fieldset>
+                    <fieldset class="mb-4">
+                        <div class="relative">
                             <label for="contact_person" class="block">
                                 <span class="text-sm">Contact Person</span>
                             </label>
@@ -160,7 +176,7 @@
                             <label for="contact_num" class="block">
                                 <span class="text-sm">Phone Number</span>
                             </label>
-                            <input type="text" id="contact_num" class="w-full rounded-md border-0 shadow" v-model="pantry.contacts[0].contact_num" maxlength="12"/>
+                            <input type="text" id="contact_num" class="w-full rounded-md border-0 shadow" v-model="pantry.contacts[0].contact_num" maxlength="12" pattern="^[+]*09[0-9]{9,10}" title="Enter a twelve digit phone number (Ex: 09123456789)"/>
                         </div>
                     </fieldset>
                     <fieldset class="mb-4">
