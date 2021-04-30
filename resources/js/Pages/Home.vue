@@ -73,8 +73,8 @@
                 <!-- Search -->
                 <div class="fixed z-20 top-0 left-0 w-full mt-8 p-2 transition-height overflow-hidden" :class="searchVisible ? 'bg-gray-100 h-full z-30' : 'bg-white shadow h-16'">
                     <section class="relative">
-                        <div class="container mx-auto">
-                            <div class="relative h-12 w-full bg-white border rounded-md mb-4 overflow-hidden transition" :class="searchVisible ? 'border-transparent shadow' : ''">
+                        <div class="relative container mx-auto">
+                            <div class="sticky top-0 left-0 h-12 w-full bg-white border rounded-md mb-2 overflow-hidden transition" :class="searchVisible ? 'border-transparent shadow' : ''">
                                 <div class="h-12 flex items-center">
                                     <button type="button" class="h-12 w-12" v-if="!searchVisible" @click="sidebarOpen = true">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -94,7 +94,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="relative" v-if="screen === 'main'">
+                            <div class="relative h-screen overflow-auto pb-24 rounded-md" v-if="screen === 'main'">
                                 <div class="relative bg-white shadow p-4 rounded-md" v-if="!filteredList && searchQuery">
                                     <span class="block">No results found.</span>
                                     <span class="text-sm text-gray-500">Please try with another query.</span>
@@ -352,7 +352,13 @@ export default {
         filteredList() {
             if(this.searchQuery){
                 return this.pantries.filter((item)=>{
-                    return this.searchQuery.toLowerCase().split(' ').every(v => item.name.toLowerCase().includes(v))
+                    // return this.searchQuery.toLowerCase().split(' ').every(v => item.name.toLowerCase().includes(v))
+                    return item.name.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
+                        || item.address.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
+                        || item.city.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
+                        || item.barangay.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
+                        || item.province.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
+                        || item.region.toLowerCase().indexOf(this.searchQuery.toLowerCase()) >= 0
                 })
             }
         }
