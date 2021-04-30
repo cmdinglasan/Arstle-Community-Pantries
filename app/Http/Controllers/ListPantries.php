@@ -13,10 +13,115 @@ use Inertia\Inertia;
 
 class ListPantries extends Controller
 {
+
+    public $regions = [
+        'National Capital Region',
+        'Cordillera Administrative Region',
+        'Region 1: Ilocos Region',
+        'Region 2: Cagayan Valley',
+        'Region 3: Central Luzon',
+        'Region 4A: CALABARZON',
+        'Region 4B: MIMAROPA / Southwestern Tagalog',
+        'Region 5: Bicol Region',
+        'Region 6: Western Visayas',
+        'Region 7: Central Visayas',
+        'Region 8: Eastern Visayas',
+        'Region 9: Zamboanga Peninsula',
+        'Region 10: Northern Mindanao',
+        'Region 11: Davao Region',
+        'Region 12: SOCCSKARGEN',
+        'Region 13: Caraga Region',
+        'Bangsamoro Autonomous Region in Muslim Mindanao'
+    ];
+
+    public $provinces = [
+        'Abra',
+        'Agusan del Norte',
+        'Agusan del Sur',
+        'Aklan',
+        'Albay',
+        'Antique',
+        'Apayao',
+        'Basilan',
+        'Bataan',
+        'Batanes',
+        'Batangas',
+        'Benguet',
+        'Biliran',
+        'Bohol',
+        'Bukidnon',
+        'Bulacan',
+        'Cagayan',
+        'Camarines Norte',
+        'Camarines Sur',
+        'Camiguin',
+        'Capiz',
+        'Catanduanes',
+        'Cavite',
+        'Cebu',
+        'Cotabato',
+        'Davao de Oro',
+        'Davao del Norte',
+        'Davao del Sur',
+        'Davao Occidental',
+        'Dinagat Islands',
+        'Eastern Samar',
+        'Guimaras',
+        'Ifugao',
+        'Ilocos Norte',
+        'Ilocos Sur',
+        'Iloilo',
+        'Isabela',
+        'Kalinga',
+        'La Union',
+        'Laguna',
+        'Lanao del Norte',
+        'Lanao del Sur',
+        'Leyte',
+        'Maguindanao',
+        'Marinduque',
+        'Masbate',
+        'Misamis Occidental',
+        'Misamis Oriental',
+        'Mountain Province',
+        'NCR, 2nd District',
+        'NCR, 3rd District',
+        'NCR, 4th District',
+        'NCR, Manila',
+        'Negros Occidental',
+        'Negros Oriental',
+        'Northern Samar',
+        'Nueva Ecija',
+        'Nueva Vizcaya',
+        'Occidental Mindoro',
+        'Palawan',
+        'Pampanga',
+        'Pangasinan',
+        'Quezon Province',
+        'Quirino',
+        'Rizal',
+        'Romblon',
+        'Samar',
+        'Saranggani',
+        'Siquijor',
+        'South Cotabato',
+        'Southern Leyte',
+        'Sultan Kudarat',
+        'Sulu',
+        'Surigao del Norte',
+        'Surigao del Sur',
+        'Tarlac',
+        'Tawi-tawi',
+        'Zambales',
+        'Zamboanga del Norte',
+        'Zamboanga del Sur',
+        'Zamboanga Sibugay',
+    ];
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Inertia\Response
      */
     public function index()
     {
@@ -38,7 +143,10 @@ class ListPantries extends Controller
             }
             $pantryCollect->push(['region' => $region->region, 'places' => $pantryList]);
         }
-        return Inertia::render('Pantries/Index')->with('pantries', $pantryCollect);
+        return Inertia::render('Pantries/Index')->with([
+            'pantries' => $pantryCollect,
+            'provinces' => $this->provinces,
+        ]);
     }
     /**
      * Display all listing of the resource via API call.
@@ -87,21 +195,26 @@ class ListPantries extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function create()
     {
-        return Inertia::render('Pantries/Create');
+        return Inertia::render('Pantries/Create')->with([
+            'regions' => $this->regions,
+            'provinces' => $this->provinces,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
+        $regions = $this->regions;
+
         $validated = $request->validate([
             'name' => 'required|unique:pantries',
             'address' => 'nullable',
@@ -115,7 +228,21 @@ class ListPantries extends Controller
             'accounts.facebook' => 'nullable',
             'accounts.twitter' => 'nullable',
             'accounts.instagram' => 'nullable',
+            'featured_image_local' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'featured_image_url' => 'nullable',
         ]);
+
+        $featuredImage = null;
+        $imageName = null;
+
+        if($request->featured_image_local) {
+            $imageName = time().'.'.$request->featured_image_local->getClientOriginalName();
+            if($imageName != $pantry->featured_image_local) {
+                $featuredImage = $request->file('featured_image_local')->storeAs('images', $imageName, 'public');
+            } else {
+                $featuredImage = $pantry->featured_image_local;
+            }
+        }
 
         $contact = new Contact();
         $contact->name = $request->contact['person'];
@@ -133,12 +260,14 @@ class ListPantries extends Controller
         $pantry->address = $request->address;
         $pantry->barangay = $request->barangay;
         $pantry->city = $request->city;
-        $pantry->province = $request->province;
-        $pantry->region = $request->region;
+        $pantry->province = $this->provinces[$request->province];
+        $pantry->region = $this->regions[$request->region];
         $pantry->contact_id = $contact->id;
         $pantry->account_id = $account->id;
         $pantry->source = $request->source;
         $pantry->contributor_id = Auth::id();
+        $pantry->featured_image_local = $featuredImage;
+        $pantry->featured_image_url = $request->featured_image_url;
         $pantry->save();
 
         if($pantry) {
@@ -175,14 +304,30 @@ class ListPantries extends Controller
     {
         $current = Pantry::with('contacts', 'accounts')->findOrFail($request->id);
 
-        return Inertia::render('Pantries/Edit')->with('pantry', $current);
+        foreach($this->regions as $key => $region) {
+            if($current->region == $region) {
+                $current->region = $key;
+            }
+        }
+
+        foreach($this->provinces as $key => $province) {
+            if($current->province == $province) {
+                $current->province = $key;
+            }
+        }
+
+        return Inertia::render('Pantries/Edit')->with([
+            'pantry' => $current,
+            'provinces' => $this->provinces,
+            'regions' => $this->regions,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Pantry  $pantry
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Pantry $pantry
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Pantry $pantry)
@@ -232,8 +377,8 @@ class ListPantries extends Controller
         $pantry->address = $request->address;
         $pantry->barangay = $request->barangay;
         $pantry->city = $request->city;
-        $pantry->province = $request->province;
-        $pantry->region = $request->region;
+        $pantry->province = $this->provinces[$request->province];
+        $pantry->region = $this->regions[$request->region];
         $pantry->contact_id = $contact->id;
         $pantry->account_id = $account->id;
         $pantry->source = $request->source;

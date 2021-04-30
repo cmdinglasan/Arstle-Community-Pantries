@@ -12,8 +12,8 @@
                     </svg>
                 </button>
                 <div class="flex-1 min-w-[0px]">
-                    <div class="flex w-full overflow-hidden h-7 overflow-ellipsis">
-                        <h1 class="font-bold text-lg text-white"><slot name="header"/></h1>
+                    <div class="flex w-full overflow-hidden h-16 items-center">
+                        <h1 class="font-bold text-lg text-white relative"><slot name="header"/></h1>
                     </div>
                 </div>
                 <inertia-link as="button" :href="route('pantries.create')" class="flex-none h-16 w-16 text-white" v-if="(!route().current('pantries.show'))|| route().current('pantries.edit')">
@@ -111,7 +111,7 @@
 
 <script>
 export default {
-    props: ['auth','current'],
+    props: ['auth','current', 'pantry'],
     name: "Dashboard",
     data() {
         return {
@@ -119,20 +119,12 @@ export default {
             searchOpen: false,
             searchQuery: null,
             subDirectory: false,
-            scrollPosition: null,
         }
     },
     mounted() {
       this.checkIfSubDirectory();
-      window.addEventListener('scroll', this.updateScroll);
-      if(route().current('pantries.show')) {
-          window.addEventListener('scroll', this.updateScroll);
-      }
     },
     methods: {
-        updateScroll() {
-            this.scrollPosition = window.scrollY;
-        },
         toggleSearch() {
           this.searchOpen = true;
           this.$nextTick(() => {
@@ -140,7 +132,11 @@ export default {
           });
         },
         goBack() {
-            if(document.referrer.indexOf(window.location.host) !== -1) {
+            if(route().current('pantries.edit')) {
+                location.href = route('pantries.show', this.pantry)
+            } else if(route().current('pantries.show')) {
+                location.href = route('pantries.index')
+            } else if(document.referrer.indexOf(window.location.host) !== -1) {
                 history.back();
             } else {
                 location.href = route('pantries.index');

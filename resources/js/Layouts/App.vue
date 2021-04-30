@@ -11,7 +11,7 @@
                     </a>
                 </div>
                 <div class="flex-none">
-                    <inertia-link :href="route('pantries.create')" class="h-8 flex items-center gap-2">
+                    <inertia-link :href="route('pantries.index')" class="h-8 flex items-center gap-2">
                         <span class="text-xs uppercase font-bold">Contribute</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />

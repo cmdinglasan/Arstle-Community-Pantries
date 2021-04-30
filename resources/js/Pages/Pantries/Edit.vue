@@ -1,8 +1,14 @@
 <template>
-    <dashboard-layout>
+    <dashboard-layout :pantry="pantry.id">
         <template #header>
-<!--            Edit Pantry -->
-            {{ changePhotoModal }} {{ imageUrlModal }}
+            <div class="relative h-32 overflow-hidden flex flex-col items-start transform transition duration-750 block" :class="scrollPosition >= 210 ? '-translate-y-8' : 'translate-y-8'">
+                <div class="h-16 flex-none flex items-center">
+                    <span>Edit Pantry</span>
+                </div>
+                <div class="h-16 flex-none flex items-center">
+                    <span>{{ pantry.name }}</span>
+                </div>
+            </div>
         </template>
         <template #content>
             <section class="relative">
@@ -124,7 +130,10 @@
                             <label for="province" class="block">
                                 <span class="text-sm">Province</span>
                             </label>
-                            <input type="text" id="province" class="w-full rounded-md border-0 shadow" v-model="pantry.province" required/>
+                            <select id="province" class="w-full rounded-md border-0 shadow" v-model="pantry.province" required>
+                                <option disabled>Choose a region</option>
+                                <option v-for="(province, index) in provinces" :value="index" v-text="province" :selected="province === pantry.province"></option>
+                            </select>
                         </div>
                     </fieldset>
                     <fieldset class="mb-4">
@@ -132,7 +141,10 @@
                             <label for="region" class="block">
                                 <span class="text-sm">Region</span>
                             </label>
-                            <input type="text" id="region" class="w-full rounded-md border-0 shadow" v-model="pantry.region" required/>
+                            <select id="region" class="w-full rounded-md border-0 shadow" v-model="pantry.region" required>
+                                <option disabled>Choose a region</option>
+                                <option v-for="(region, index) in regions" :value="index" v-text="region" :selected="region === pantry.region"></option>
+                            </select>
                         </div>
                     </fieldset>
                     <fieldset class="mb-4">
@@ -203,7 +215,7 @@ import DashboardLayout from '@/Layouts/Dashboard'
 
 export default {
     name: "Edit",
-    props: ['searchQuery','pantry'],
+    props: ['searchQuery','pantry', 'provinces', 'regions'],
     data() {
         return {
             photoType: null,
@@ -211,15 +223,24 @@ export default {
             temporaryImage: null,
             originalImage: null,
             imageUrlModal: false,
+            scrollPosition: 0,
         }
     },
     components: {
         DashboardLayout,
     },
     mounted() {
-      this.originalImage = this.pantry.featured_image_local;
+        this.originalImage = this.pantry.featured_image_local;
+
+        if(route().current('pantries.show') || route().current('pantries.edit')) {
+            window.addEventListener('scroll', this.updateScroll);
+        }
     },
     methods: {
+        updateScroll() {
+            this.scrollPosition = window.scrollY;
+            console.log(this.scrollPosition);
+        },
         updatedPantry() {
             // const data = new FormData();
             // data.append('name', this.pantry.name);

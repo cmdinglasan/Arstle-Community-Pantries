@@ -5,14 +5,93 @@
         </template>
         <template #content>
             <section class="relative">
-                <form @submit.prevent="createPantry" method="post">
+                <transition name="fade">
+                    <div class="fixed top-0 left-0 z-50 h-full w-full flex items-center justify-center" v-if="changePhotoModal">
+                        <div class="absolute top-0 left-0 bg-black h-full w-full bg-opacity-50"></div>
+                        <div class="relative m-4 bg-white rounded-md w-11/12 md:w-[320px]">
+                            <div class="relative">
+                                <header class="relative">
+                                    <h1 class="font-semibold px-4 pt-4">Change photo</h1>
+                                </header>
+                                <div class="relative pt-2">
+                                    <button type="button" class="w-full" disabled>
+                                        <label for="featured_image" class="block text-left px-4 py-2 w-full active:bg-gray-100">
+                                            <span class="text-sm text-gray-200">Upload a photo</span>
+                                        </label>
+                                    </button>
+                                    <button type="button" @click="toggleImageURLModal" class="text-left px-4 py-2 w-full active:bg-gray-100">
+                                        <span class="text-sm">Enter an image URL</span>
+                                    </button>
+                                </div>
+                                <div class="relative px-2 pb-2 flex items-center justify-end gap-2">
+                                    <button type="button" class="text-left px-4 py-2 active:bg-blue-100 focus:outline-none" @click="toggleChangePhotoModal">
+                                        <span class="text-sm text-blue-700">Cancel</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+                <transition name="fade">
+                    <div class="fixed top-0 left-0 z-50 h-full w-full flex items-center justify-center" v-if="imageUrlModal">
+                        <div class="absolute top-0 left-0 bg-black h-full w-full bg-opacity-50"></div>
+                        <div class="relative m-4 bg-white rounded-md w-11/12 md:w-[320px]">
+                            <div class="relative">
+                                <header class="relative">
+                                    <h1 class="font-semibold px-4 pt-4">Enter image URL</h1>
+                                </header>
+                                <div class="relative pt-2">
+                                    <div class="relative px-4 py-4">
+                                        <input type="text" placeholder="URL" class="w-full border-0 border-b-2 border-gray-300 px-0 focus:border-blue-500 focus:ring-0 transition" v-model="form.featured_image_url">
+                                    </div>
+                                </div>
+                                <div class="relative px-2 pb-2 flex items-center justify-end gap-2">
+                                    <button type="button" class="text-left px-4 py-2 active:bg-blue-100 focus:outline-none" @click="toggleImageURLModal">
+                                        <span class="text-sm text-blue-700">Cancel</span>
+                                    </button>
+                                    <button type="button" class="text-left px-4 py-2 active:bg-blue-100 focus:outline-none" @click="toggleImageURLModal">
+                                        <span class="text-sm text-blue-700 font-bold">Submit</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+                <form @submit.prevent="createPantry" method="post" enctype="multipart/form-data">
+                    <fieldset class="mb-4">
+                        <div class="relative">
+                            <div class="relative h-32 w-full bg-gray-50 rounded-md overflow-hidden">
+                                <div class="flex items-center justify-center h-32 w-full">
+                                    <div class="relative" v-if="!(form.featured_image_local || form.featured_image_url)">
+                                        <button type="button" class="group focus:outline-none select-none" @click="toggleChangePhotoModal">
+                                            <div class="block w-16 h-16 rounded-full overflow-hidden bg-blue-500 group-active:bg-blue-700 flex items-center justify-center">
+                                                <span class="material-icons-outlined text-white text-2xl">add_photo_alternate</span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                    <div class="relative h-32 w-full" v-else>
+                                        <div class="absolute z-10 top-0 left-0 h-32 w-full bg-black bg-opacity-30 group group-active-within:bg-opacity-50">
+                                            <button type="button" class="h-32 w-full focus:outline-none select-none" @click="toggleChangePhotoModal">
+                                                <div class="relative h-32 w-full flex items-center justify-center">
+                                                    <span class="material-icons-outlined text-white text-2xl">add_photo_alternate</span>
+                                                </div>
+                                            </button>
+                                        </div>
+                                        <div class="relative h-0">
+                                            <img :src="getImage()" class="h-32 w-full object-cover" ref="featuredImage"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="file" id="featured_image" class="hidden" @change="uploadImage" disabled aria-disabled="true"/>
+                        </div>
+                    </fieldset>
                     <fieldset class="mb-4">
                         <div class="relative">
                             <label for="name" class="block">
                                 <span class="text-sm">Name</span>
                             </label>
                             <input type="text" id="name" class="w-full rounded-md border-0 shadow" v-model="form.name" required/>
-                            <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
                         </div>
                     </fieldset>
                     <fieldset class="mb-4">
@@ -47,8 +126,10 @@
                             <label for="province" class="block">
                                 <span class="text-sm">Province</span>
                             </label>
-                            <input type="text" id="province" class="w-full rounded-md border-0 shadow" v-model="form.province" required/>
-                            <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
+                            <select id="province" class="w-full rounded-md border-0 shadow" v-model="form.province" required>
+                                <option disabled>Choose a region</option>
+                                <option v-for="(province, index) in provinces" :value="index" v-text="province" :selected="province === form.province"></option>
+                            </select>
                         </div>
                     </fieldset>
                     <fieldset class="mb-4">
@@ -56,7 +137,10 @@
                             <label for="region" class="block">
                                 <span class="text-sm">Region</span>
                             </label>
-                            <input type="text" id="region" class="w-full rounded-md border-0 shadow" v-model="form.region" required/>
+                            <select class="w-full rounded-md border-0 shadow" v-model="form.region" required>
+                                <option disabled selected>Choose a region</option>
+                                <option v-for="(region, index) in regions" :value="index" v-text="region"></option>
+                            </select>
                             <span v-if="form.errors.name" class="text-xs text-red-500">{{ form.errors.name }}</span>
                         </div>
                     </fieldset>
@@ -142,7 +226,7 @@ import DashboardLayout from '@/Layouts/Dashboard'
 
 export default {
 name: "Create",
-    props: ['searchQuery'],
+    props: ['searchQuery','regions','provinces'],
     components: {
         DashboardLayout,
     },
@@ -164,10 +248,17 @@ name: "Create",
                     facebook: null,
                     twitter: null,
                     instagram: null,
-                }
+                },
+                featured_image_local: null,
+                featured_image_url: null,
             }, {
                 resetOnSuccess: true,
             }),
+            photoType: null,
+            changePhotoModal: false,
+            temporaryImage: null,
+            originalImage: null,
+            imageUrlModal: false,
         }
     },
     methods: {
@@ -176,9 +267,44 @@ name: "Create",
                 preserveScroll: true,
             });
         },
-        checkForm() {
+        uploadImage(e) {
+            this.toggleChangePhotoModal();
+            let file = e.target.files[0];
+            let reader = new FileReader();
 
+            if(file['size'] < 2111775) {
+                reader.onloadend = (file) => {
+                    this.temporaryImage = reader.result;
+                }
+                reader.readAsDataURL(file);
+            } else {
+                alert('File size can not be bigger than 2 MB');
+            }
+
+            this.form.featured_image_local = file;
         },
+        getImage() {
+            let photo = null;
+            if(this.temporaryImage) {
+                photo = this.temporaryImage;
+            } else if(this.form.featured_image_local) {
+                photo = this.form.featured_image_local;
+            } else {
+                photo = this.form.featured_image_url;
+            }
+            return photo;
+        },
+        toggleChangePhotoModal() {
+            this.changePhotoModal = !this.changePhotoModal;
+        },
+        toggleImageURLModal() {
+            if(this.changePhotoModal) {
+                this.imageUrlModal = true;
+                this.changePhotoModal = false;
+            } else if(!this.changePhotoModal && this.imageUrlModal) {
+                this.imageUrlModal = false;
+            }
+        }
     }
 }
 </script>
