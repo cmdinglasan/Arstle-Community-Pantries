@@ -378,8 +378,8 @@ export default {
                 zoomControl: false,
             });
 
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                attribution: 'Map data &copy; <a href="https://arstlemedia.com">Arstle</a> contributors, Rappler',
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}{r}.png', {
+                attribution: 'Map data &copy; <a href="https://arstlemedia.com">Arstle</a> contributors, Rappler. \'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
             }).addTo(this.map);
         },
         setCurrentPantry(pantry) {
