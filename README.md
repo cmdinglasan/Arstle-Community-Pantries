@@ -22,7 +22,7 @@ This is a Laravel-based API containing the list of community pantries in PH adde
 | GET    | ?city={city} | Return the list by city | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?city=Taguig) |
 | GET    | ?sortBy={category} | Return the list by category (see category parameters below). Default alphabetical order is Ascending | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?sortBy=region) |
 | GET    | ?order={order} | Return the list either 'asc' or 'desc' | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?order=desc) |
-| GET    | ?coordsOnly={true | false} | Returns the names of the pantries and their map coordinates | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?coordsOnly=true) |
+| GET    | ?coordsOnly={true or false} | Returns the names of the pantries and their map coordinates | [Live Version](https://arstle-pantries.herokuapp.com/api/pantries?coordsOnly=true) |
 
 ## Category Parameters
 
