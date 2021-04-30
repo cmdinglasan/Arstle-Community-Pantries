@@ -384,7 +384,7 @@ export default {
                 zoomControl: false,
             });
 
-            L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; <a href="https://arstlemedia.com">Arstle</a> contributors, Rappler',
             }).addTo(this.map);
         },
