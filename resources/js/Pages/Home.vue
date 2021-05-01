@@ -150,7 +150,7 @@
                                     <h1 class="text-lg">{{ currentPantry.name }}</h1>
                                     <span class="text-gray-500 text-sm">Community Pantry</span>
                                 </header>
-                                <div :class="cardDisplay ? 'py-4 border-b' : 'py-2'" v-if="currentPantry.contacts[0].contact_num != null">
+                                <div :class="cardDisplay ? 'py-4 border-b' : 'py-2'">
                                     <div class="relative overflow-auto whitespace-nowrap pl-4">
                                         <a :href="currentPantry.contacts[0].contact_num ? ('tel:' + currentPantry.contacts[0].contact_num) : '#'" class="inline-block px-4 py-2 mr-2 border rounded-full">
                                             <div class="flex items-center gap-2 text-sm">
@@ -161,13 +161,22 @@
                                             </div>
                                         </a>
                                         <a :href="'https://www.google.com/maps/@' + currentPantry.latitude + ',' + currentPantry.longitude + ',13z'" target="_blank" class="inline-block px-4 py-2 mr-2 border rounded-full" v-if="currentPantry.latitude && currentPantry.longitude">
-                                        <div class="flex items-center gap-2 text-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd" />
-                                            </svg>
-                                            <span class="flex-1">Open in Google Maps</span>
-                                        </div>
-                                    </a>
+                                            <div class="flex items-center gap-2 text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd" />
+                                                </svg>
+                                                <span class="flex-1">Open in Google Maps</span>
+                                            </div>
+                                        </a>
+                                        <a href="#" class="inline-block px-4 py-2 mr-2 border rounded-full" v-if="currentPantry.latitude && currentPantry.longitude" @click="copyCoordinates(currentPantry)">
+                                            <div class="flex items-center gap-2 text-sm">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
+                                                    <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
+                                                </svg>
+                                                <span class="flex-1">Copy coords</span>
+                                            </div>
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="relative border-b" v-if="cardDisplay">
@@ -396,6 +405,18 @@ export default {
             } else {
                 this.map.removeLayer(this.mapMarker);
             }
+        },
+        copyCoordinates(pantry) {
+            let longitude = pantry.longitude;
+            let latitude = pantry.latitude;
+            let coordinates = document.createElement('input');
+            coordinates.setAttribute('type','text');
+            coordinates.innerHTML = latitude + ', ' + longitude;
+            coordinates.select();
+            document.execCommand('copy');
+
+            coordinates.setAttribute('type','hidden');
+            window.getSelection().removeAllRanges();
         },
     }
 }

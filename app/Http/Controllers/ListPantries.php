@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Symfony\Component\Console\Input\Input;
 
 class ListPantries extends Controller
 {
@@ -159,6 +160,8 @@ class ListPantries extends Controller
 
         $query = $request->all();
 
+        $searchTerm = $request->input('query');
+
         if($request->has('coordsOnly')) {
             if($request->input('coordsOnly') == true) {
                 $pantries = Pantry::select(['name','latitude','longitude'])->orderBy('name');
@@ -191,7 +194,11 @@ class ListPantries extends Controller
             }
         }
 
-
+        if($request->has('search')) {
+            $pantries = Pantry::with(['contacts', 'accounts'])
+                ->where('name', 'like', '%' . $request->search . '%')
+                ->orderBy('name', 'asc');
+        }
 
         if(count($pantries->get()) > 0) {
             return response()->json($pantries->get()->makeHidden(['id','contributor_id', 'verifier_id', 'contact_id', 'account_id']));
