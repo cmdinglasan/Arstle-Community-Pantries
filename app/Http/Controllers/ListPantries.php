@@ -197,6 +197,10 @@ class ListPantries extends Controller
         if($request->has('search')) {
             $pantries = Pantry::with(['contacts', 'accounts'])
                 ->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('city', 'like','%' . $request->search . '%')
+                ->orWhere('region', 'like','%' . $request->search . '%')
+                ->orWhere('address', 'like','%' . $request->search . '%')
+                ->orWhere('barangay', 'like','%' . $request->search . '%')
                 ->orderBy('name', 'asc');
         }
 
