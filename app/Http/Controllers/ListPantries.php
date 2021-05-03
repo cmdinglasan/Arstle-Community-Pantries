@@ -201,6 +201,7 @@ class ListPantries extends Controller
                 ->orWhere('region', 'like','%' . $request->search . '%')
                 ->orWhere('address', 'like','%' . $request->search . '%')
                 ->orWhere('barangay', 'like','%' . $request->search . '%')
+                ->orWhere('province', 'like','%' . $request->search . '%')
                 ->orderBy('name', 'asc');
         }
 
