@@ -46,6 +46,7 @@ To contribute in adding in the list of community pantries, you may click here [A
 
 ## Credits
 [Christian Dinglasan](https://cmdinglasan.com)
+[SaanYanPH](https://github.com/saanyan/saanmaycommunitypantry)
 
 ## Contributors
 
